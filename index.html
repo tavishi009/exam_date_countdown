@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exam Countdown Timer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #f7f7f5;
+      color: #111;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .wrap { max-width: 700px; margin: 0 auto; }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .top-bar h1 { font-size: 22px; font-weight: 600; color: #111; }
+    #clock { font-size: 13px; color: #aaa; font-variant-numeric: tabular-nums; }
+
+    /* ADD FORM */
+    .add-form {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+    .field { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 140px; }
+    .field label {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field input {
+      font-size: 13px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      color: #111;
+      background: #fff;
+    }
+    .field input:focus { outline: none; border-color: #aaa; }
+
+    .add-btn {
+      padding: 9px 22px;
+      background: #111;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .add-btn:hover { background: #333; }
+
+    /* SUMMARY */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .metric {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .metric-val { font-size: 22px; font-weight: 600; color: #111; }
+    .metric-lbl { font-size: 11px; color: #888; margin-top: 3px; }
+
+    /* EXAM CARDS */
+    .exams-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .exam-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .exam-card.urgent { border-color: #e74c3c; background: #fff9f9; }
+    .exam-card.soon   { border-color: #d68910; background: #fefdf5; }
+    .exam-card.fine   { border-color: #e5e5e5; }
+    .exam-card.done   { opacity: 0.45; }
+
+    .urgency-bar {
+      width: 4px;
+      border-radius: 4px;
+      align-self: stretch;
+      flex-shrink: 0;
+    }
+    .urgent .urgency-bar { background: #e74c3c; }
+    .soon .urgency-bar   { background: #d68910; }
+    .fine .urgency-bar   { background: #27ae60; }
+    .done .urgency-bar   { background: #ccc; }
+
+    .exam-info { flex: 1; min-width: 0; }
+    .exam-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .exam-date { font-size: 12px; color: #888; }
+
+    .countdown { text-align: right; flex-shrink: 0; }
+    .countdown-num { font-size: 28px; font-weight: 700; line-height: 1; }
+    .urgent .countdown-num { color: #e74c3c; }
+    .soon .countdown-num   { color: #d68910; }
+    .fine .countdown-num   { color: #27ae60; }
+    .done .countdown-num   { color: #aaa; }
+
+    .countdown-label { font-size: 11px; color: #aaa; margin-top: 2px; }
+    .hms {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 3px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .remove-x {
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 18px;
+      flex-shrink: 0;
+      padding: 0 2px;
+    }
+    .remove-x:hover { color: #e74c3c; }
+
+    .empty {
+      text-align: center;
+      color: #aaa;
+      font-size: 13px;
+      padding: 2.5rem;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+    }
+
+    @media (max-width: 500px) {
+      .summary { grid-template-columns: 1fr 1fr; }
+      .countdown-num { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="top-bar">
+    <h1>Exam Countdown</h1>
+    <span id="clock"></span>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="add-form">
+    <div class="field" style="flex:2;">
+      <label>Exam name</label>
+      <input type="text" id="examName" placeholder="e.g. Data Structures" />
+    </div>
+    <div class="field" style="flex:1;min-width:180px;">
+      <label>Date & time</label>
+      <input type="datetime-local" id="examDate" />
+    </div>
+    <button class="add-btn" onclick="addExam()">Add exam</button>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary" id="summary" style="display:none;">
+    <div class="metric">
+      <div class="metric-val" id="sumTotal">0</div>
+      <div class="metric-lbl">Total exams</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" style="color:#e74c3c;" id="sumUrgent">0</div>
+      <div class="metric-lbl">Urgent (&lt;3 days)</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" style="color:#27ae60;" id="sumDone">0</div>
+      <div class="metric-lbl">Completed</div>
+    </div>
+  </div>
+
+  <!-- EXAM LIST -->
+  <div class="exams-list" id="examsList">
+    <div class="empty" id="emptyMsg">No exams added yet. Add your first exam above!</div>
+  </div>
+
+</div>
+
+<script>
+  // ── State ─────────────────────────────────────────────────
+  let exams = JSON.parse(localStorage.getItem('exams_v1') || '[]');
+
+  function save() {
+    localStorage.setItem('exams_v1', JSON.stringify(exams));
+  }
+
+  // ── Add Exam ──────────────────────────────────────────────
+  function addExam() {
+    const name = document.getElementById('examName').value.trim();
+    const date = document.getElementById('examDate').value;
+
+    if (!name) { alert('Please enter the exam name.'); return; }
+    if (!date)  { alert('Please select the exam date and time.'); return; }
+    if (new Date(date) < new Date()) { alert('Please select a future date.'); return; }
+
+    exams.push({ id: Date.now(), name, date });
+    exams.sort((a, b) => new Date(a.date) - new Date(b.date));
+    save();
+
+    document.getElementById('examName').value = '';
+    document.getElementById('examDate').value = '';
+    render();
+  }
+
+  // ── Remove Exam ───────────────────────────────────────────
+  function removeExam(id) {
+    if (!confirm('Remove this exam?')) return;
+    exams = exams.filter(e => e.id !== id);
+    save();
+    render();
+  }
+
+  // ── Status ────────────────────────────────────────────────
+  function getStatus(msLeft) {
+    if (msLeft <= 0) return 'done';
+    const days = msLeft / (1000 * 60 * 60 * 24);
+    if (days <= 3) return 'urgent';
+    if (days <= 7) return 'soon';
+    return 'fine';
+  }
+
+  // ── Format Countdown ──────────────────────────────────────
+  function formatCountdown(msLeft) {
+    if (msLeft <= 0) return { days: 0, hms: 'Exam over', label: '' };
+    const days = Math.floor(msLeft / (1000 * 60 * 60 * 24));
+    const hrs  = Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((msLeft % (1000 * 60)) / 1000);
+    const hms  = `${String(hrs).padStart(2,'0')}h ${String(mins).padStart(2,'0')}m ${String(secs).padStart(2,'0')}s`;
+    return { days, hms, label: days === 1 ? 'day left' : 'days left' };
+  }
+
+  // ── Render All Cards ──────────────────────────────────────
+  function render() {
+    const list    = document.getElementById('examsList');
+    const empty   = document.getElementById('emptyMsg');
+    const summary = document.getElementById('summary');
+
+    if (exams.length === 0) {
+      list.innerHTML = '';
+      list.appendChild(empty);
+      empty.style.display = 'block';
+      summary.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    summary.style.display = 'grid';
+
+    const now = Date.now();
+    let urgent = 0, done = 0;
+
+    list.innerHTML = exams.map(e => {
+      const msLeft  = new Date(e.date).getTime() - now;
+      const status  = getStatus(msLeft);
+      const { days, hms, label } = formatCountdown(msLeft);
+
+      if (status === 'urgent') urgent++;
+      if (status === 'done')   done++;
+
+      const dateStr = new Date(e.date).toLocaleDateString('en-IN', {
+        day: 'numeric', month: 'short', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+
+      return `
+        <div class="exam-card ${status}">
+          <div class="urgency-bar"></div>
+          <div class="exam-info">
+            <div class="exam-name">${e.name}</div>
+            <div class="exam-date">${dateStr}</div>
+          </div>
+          <div class="countdown">
+            <div class="countdown-num">${status === 'done' ? '—' : days}</div>
+            <div class="countdown-label">${status === 'done' ? 'completed' : label}</div>
+            ${status !== 'done' ? `<div class="hms" id="hms-${e.id}">${hms}</div>` : ''}
+          </div>
+          <button class="remove-x" onclick="removeExam(${e.id})" title="Remove">&times;</button>
+        </div>
+      `;
+    }).join('');
+
+    document.getElementById('sumTotal').textContent  = exams.length;
+    document.getElementById('sumUrgent').textContent = urgent;
+    document.getElementById('sumDone').textContent   = done;
+  }
+
+  // ── Live Tick (every second) ──────────────────────────────
+  function tick() {
+    const now = Date.now();
+
+    const clockEl = document.getElementById('clock');
+    if (clockEl) {
+      clockEl.textContent = new Date().toLocaleTimeString('en-IN', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
+      });
+    }
+
+    exams.forEach(e => {
+      const msLeft = new Date(e.date).getTime() - now;
+      const hmsEl  = document.getElementById('hms-' + e.id);
+      if (hmsEl && msLeft > 0) {
+        const { hms } = formatCountdown(msLeft);
+        hmsEl.textContent = hms;
+      }
+    });
+  }
+
+  // ── Enter key to add ──────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addExam();
+  });
+
+  // ── Init ──────────────────────────────────────────────────
+  render();
+  setInterval(tick, 1000);
+  tick();
+</script>
+
+</body>
+</html>
