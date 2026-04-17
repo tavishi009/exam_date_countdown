@@ -39,4 +39,3 @@ Plain HTML, CSS, and JavaScript. Uses `localStorage` to save your exams between 
 
 ---
 
-Made by **Tavishi** — BIT Mesra
