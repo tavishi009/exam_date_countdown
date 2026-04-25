@@ -16,7 +16,7 @@ Built this because I kept forgetting how many days were left for each exam. Now 
 
 ## How to run it
 
-Just open `exam_countdown.html` in your browser. That's it.
+Just open `exam_countdown.html` in your browser. That's it
 
 No setup. No install. Works offline.
 
