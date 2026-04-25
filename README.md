@@ -6,7 +6,7 @@ Built this because I kept forgetting how many days were left for each exam. Now 
 
 ## What it does
 
-- Add your exams with a name and date/time.
+- Add your exams with a name and date/time
 - Live countdown showing days, hours, minutes, and seconds.
 - Color coded urgency — green (plenty of time), orange (1 week left), red (3 days or less).
 - Summary bar showing total exams, urgent ones, and completed ones.
