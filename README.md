@@ -11,6 +11,7 @@ Built this because I kept forgetting how many days were left for each exam. Now 
 - Color coded urgency — green (plenty of time), orange (1 week left), red (3 days or less)
 - Summary bar showing total exams, urgent ones, and completed ones
 - Saves everything in your browser — data stays even after you close the tab
+- Toast notification confirms when exam is added
 
 ---
 
