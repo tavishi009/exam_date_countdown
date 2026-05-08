@@ -234,7 +234,9 @@
     if (!date)  { alert('Please select the exam date and time.'); return; }
     if (new Date(date) < new Date()) { alert('Please select a future date.'); return; }
 
-    exams.push({ id: Date.now(), name, date });
+    const code = document.getElementById('examCode').value.trim().toUpperCase();
+    exams.push({ id: Date.now(), name, date, code });
+    document.getElementById('examCode').value = '';
     exams.sort((a, b) => new Date(a.date) - new Date(b.date));
     showToast(name + ' added successfully!');
     save();
@@ -326,7 +328,7 @@
           <div class="urgency-bar"></div>
           <div class="exam-info">
             <div class="exam-name">${e.name}</div>
-            <div class="exam-date">${dateStr}</div>
+            <div class="exam-date">${e.code ? e.code + ' · ' : ''}${dateStr}</div>
           </div>
           <div class="countdown">
             <div class="countdown-num">${status === 'done' ? '—' : days}</div>
