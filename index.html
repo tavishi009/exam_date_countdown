@@ -243,7 +243,8 @@
 
   // ── Remove Exam ───────────────────────────────────────────
   function removeExam(id) {
-    if (!confirm('Remove this exam?')) return;
+    const exam = exams.find(e => e.id === id);
+    if (!confirm('Remove "' + exam.name + '" from your list?')) return;
     exams = exams.filter(e => e.id !== id);
     save();
     render();
