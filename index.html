@@ -98,7 +98,7 @@
       align-items: center;
       gap: 16px;
     }
-    .exam-card.urgent { border-color: #e74c3c; background: #fff9f9; }
+    .exam-card.urgent { border-color: #e74c3c; background: #fff9f9; animation: pulse 2s infinite; }
     .exam-card.soon   { border-color: #d68910; background: #fefdf5; }
     .exam-card.fine   { border-color: #e5e5e5; }
     .exam-card.done   { opacity: 0.45; }
@@ -165,6 +165,11 @@
     @media (max-width: 500px) {
       .summary { grid-template-columns: 1fr 1fr; }
       .countdown-num { font-size: 22px; }
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(231,76,60,0.15); }
+      50% { box-shadow: 0 0 0 6px rgba(231,76,60,0); }
     }
   </style>
 </head>
