@@ -40,3 +40,4 @@ Plain HTML, CSS, and JavaScript. Uses `localStorage` to save your exams between 
 
 ---
 
+*Last updated: May 2026*
